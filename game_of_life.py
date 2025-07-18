@@ -1224,13 +1224,17 @@ class Controller:
 
                 self._unhighlight_highlighted_cells()
 
+                # Keep only mouse button bits (0xff00) to ignore
+                # modifiers like Shift (0x0001), Num Lock (0x0010), etc.
+                state = event.state & 0xff00
+
                 # Left click drag: set the cell(s) alive
-                if event.state == 264:
+                if state == 0x0100:
                     self.model.set_cells_state(affected_cells, state=True)
                     self.view.update_given_cells(affected_cells, state=True)
 
                 # Right click drag: set the cell(s) dead
-                elif event.state == 1032:
+                elif state == 0x0400:
                     self.model.set_cells_state(affected_cells, state=False)
                     self.view.update_given_cells(affected_cells, state=False)
 
