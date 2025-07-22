@@ -843,6 +843,15 @@ class View(tk.Tk):
             ttk.Label(keybinds_frame, text=key, anchor="c", background=bg
                       ).grid(row=row, column=1, sticky="ew")
 
+        keybinds_tip_text = (
+            "Note: Make sure your keyboard layout is set to English."
+            )
+        ttk.Label(keybinds_frame, text=keybinds_tip_text).grid(row=row + 1,
+                                                               column=0,
+                                                               columnspan=2,
+                                                               sticky="w",
+                                                               pady=(4, 0))
+
         # Close button
         ttk.Button(help_window_frame, text="Close",
                    command=self._close_help_window).pack(side="right")
