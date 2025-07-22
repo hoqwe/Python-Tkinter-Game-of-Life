@@ -1104,6 +1104,17 @@ class Controller:
         self.model.toggle_wrap()
         self.wrap_checkbutton_var.set(self.wrap)
 
+        # Refresh highlight on keybind for proper wrap-awareness
+        if event:
+            row = event.y // self.cell_size
+            col = event.x // self.cell_size
+
+            if 0 <= row < self.num_rows and 0 <= col < self.num_cols:
+                self._unhighlight_highlighted_cells()
+                affected_cells = self._get_affected_pixels(
+                    row, col, self.shapes[self.shape])
+                self._highlight_cells(affected_cells)
+
     def change_cells_color(self, event: tk.Event, state: bool) -> None:
         """Change color of the cells.
 
