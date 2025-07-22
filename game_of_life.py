@@ -120,7 +120,7 @@ def adjust_color_brightness(color: str, brightness_adjust: float = 0.1) -> str:
 
 def get_random_color() -> str:
     """Return a random color in the format '#rrggbb'."""
-    return f"#{getrandbits(8):02x}{getrandbits(8):02x}{getrandbits(8):02x}"
+    return '#' + ''.join(f"{getrandbits(8):02x}" for _ in range(3))
 
 
 class Cell:
@@ -141,13 +141,12 @@ class Cell:
         self.color = self.color_map[0]
         self.highlighted = False
 
-        self.cell_id = self.canvas.create_rectangle(
-            col * self.cell_size,
-            row * self.cell_size,
-            (col + 1) * self.cell_size,
-            (row + 1) * self.cell_size,
-            fill=self.color,
-            width=0)
+        self.cell_id = self.canvas.create_rectangle(col * self.cell_size,
+                                                    row * self.cell_size,
+                                                    (col + 1) * self.cell_size,
+                                                    (row + 1) * self.cell_size,
+                                                    fill=self.color,
+                                                    width=0)
 
     def set_state(self, new_state: int) -> None:
         """Set the state of the cell by coloring it accordingly."""
@@ -392,8 +391,8 @@ class View(tk.Tk):
             width=self.canvas_width,
             height=self.canvas_height,
             highlightthickness=0,
-            bg=adjust_color_brightness(
-                self.dead_cell_color, self.CANVAS_BACKGROUND_COLOR_ADJUST))
+            bg=adjust_color_brightness(self.dead_cell_color,
+                                       self.CANVAS_BACKGROUND_COLOR_ADJUST))
         self.canvas.grid(row=0, column=0, sticky="nsew")
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
@@ -508,8 +507,9 @@ class View(tk.Tk):
         live_cell_color_frame = ttk.Frame(appearance_frame)
         live_cell_color_frame.grid(row=0, column=0, sticky="w")
 
-        self.live_cell_color_sample = tk.Canvas(
-            live_cell_color_frame, width=11, height=11, relief="solid", bd=1)
+        self.live_cell_color_sample = tk.Canvas(live_cell_color_frame,
+                                                width=11, height=11,
+                                                relief="solid", bd=1)
         self.live_cell_color_sample.grid(row=0, column=0)
 
         live_cell_color_label = ttk.Label(live_cell_color_frame,
@@ -520,10 +520,11 @@ class View(tk.Tk):
         dead_cell_color_frame = ttk.Frame(appearance_frame)
         dead_cell_color_frame.grid(row=1, column=0, sticky="w")
 
-        self.dead_cell_color_sample = tk.Canvas(
-            dead_cell_color_frame, width=11, height=11, relief="solid", bd=1)
+        self.dead_cell_color_sample = tk.Canvas(dead_cell_color_frame,
+                                                width=11, height=11,
+                                                relief="solid", bd=1)
         self.dead_cell_color_sample.grid(row=0, column=0)
-        
+
         dead_cell_color_label = ttk.Label(dead_cell_color_frame,
                                           text="Dead Cell Color")
         dead_cell_color_label.grid(row=0, column=1, sticky="w")
@@ -533,7 +534,8 @@ class View(tk.Tk):
         self.grid_checkbutton.grid(row=0, column=1, sticky="w")
 
         # Trace checkbutton
-        self.trace_checkbutton = ttk.Checkbutton(appearance_frame, text="Trace")
+        self.trace_checkbutton = ttk.Checkbutton(appearance_frame,
+                                                 text="Trace")
         self.trace_checkbutton.grid(row=1, column=1, sticky="w")
 
         # Cell size scale
@@ -675,7 +677,7 @@ class View(tk.Tk):
                                    fill=self.color_map[self.live_state // 2])
 
     def set_cells_highlight(self, cells: list[tuple[int, int]], state: bool
-                               ) -> None:
+                            ) -> None:
         """Highlight or unhighlight given cells."""
         for row, col in cells:
             cell = self.cells[row][col]
@@ -774,7 +776,7 @@ class View(tk.Tk):
         """Add or remove grid lines to fit into the new canvas space."""
         while self.grid_lines:
             self.canvas.delete(self.grid_lines.pop())
-        
+
         self._create_grid_lines()
 
     def create_help_window(self) -> None:
@@ -855,7 +857,7 @@ class View(tk.Tk):
 
 
 class Controller:
-    """Controller for for Conway's Game of Life.
+    """Controller for Conway's Game of Life.
 
     Connects Model and View by adding behavior to all widgets and
     handling all user actions.
@@ -996,14 +998,14 @@ class Controller:
         # Live cell color
         self.view.live_cell_color_sample.config(bg=self.live_cell_color)
         self.view.live_cell_color_sample.bind(
-            "<Button-1>", lambda event: self.change_cells_color(
-                event, state=True))
+            "<Button-1>", lambda event: self.change_cells_color(event,
+                                                                state=True))
 
         # Dead cell color
         self.view.dead_cell_color_sample.config(bg=self.dead_cell_color)
         self.view.dead_cell_color_sample.bind(
-            "<Button-1>", lambda event: self.change_cells_color(
-                event, state=False))
+            "<Button-1>", lambda event: self.change_cells_color(event,
+                                                                state=False))
 
         # Grid checkbutton
         self.grid_checkbutton_var = tk.BooleanVar(value=self.grid)
@@ -1032,7 +1034,7 @@ class Controller:
 
         # Generation
         self.view.generation_value.config(text=self.generation)
-        
+
         # Population
         self._update_population_label_value()
 
@@ -1105,8 +1107,8 @@ class Controller:
     def change_cells_color(self, event: tk.Event, state: bool) -> None:
         """Change color of the cells.
 
-        Display a color palette and change cells of the specified
-        state to the chosen color.
+        Display a color palette and change cells of the specified state
+        to the chosen color.
         """
         initial_color = self.live_cell_color if state else self.dead_cell_color
         color = colorchooser.askcolor(initial_color)[1]
@@ -1118,9 +1120,8 @@ class Controller:
             else:
                 self.dead_cell_color = color
                 self.view.dead_cell_color_sample.config(bg=color)
-                self.view.canvas.config(
-                    bg=adjust_color_brightness(
-                        color, self.view.CANVAS_BACKGROUND_COLOR_ADJUST))
+                self.view.canvas.config(bg=adjust_color_brightness(
+                    color, self.view.CANVAS_BACKGROUND_COLOR_ADJUST))
 
             self.view.change_cells_color(state, color)
             self.view.update_all_cells(self.model.get_cell_states())
@@ -1149,7 +1150,9 @@ class Controller:
         self.num_rows = self.canvas_height // self.cell_size
         self.num_cols = self.canvas_width // self.cell_size
         self.model.adjust_grid_size(self.num_rows, self.num_cols)
-        self.view.adjust_cell_size(self.num_rows, self.num_cols, self.cell_size)
+        self.view.adjust_cell_size(self.num_rows, self.num_cols,
+                                   self.cell_size)
+
         self._update_population_label_value()
 
     def adjust_grid_size(self, event: tk.Event) -> None:
@@ -1180,8 +1183,8 @@ class Controller:
         col = event.x // self.cell_size
 
         if 0 <= row < self.num_rows and 0 <= col < self.num_cols:
-            affected_cells = self._get_affected_pixels(
-                row, col, self.shapes[self.shape])
+            affected_cells = self._get_affected_pixels(row, col,
+                                                       self.shapes[self.shape])
 
             self._unhighlight_highlighted_cells()
             self._highlight_cells(affected_cells)
@@ -1192,8 +1195,8 @@ class Controller:
         col = event.x // self.cell_size
 
         if 0 <= row < self.num_rows and 0 <= col < self.num_cols:
-            affected_cells = self._get_affected_pixels(
-                row, col, self.shapes[self.shape])
+            affected_cells = self._get_affected_pixels(row, col,
+                                                       self.shapes[self.shape])
 
             # Left click: set the cell(s) alive
             if event.num == 1:
@@ -1276,7 +1279,8 @@ class Controller:
 
             # If the figure pixel outside the grid and wrap is enabled
             elif self.wrap:
-                affected_pixels.append((new_row % self.num_rows, new_col % self.num_cols))
+                affected_pixels.append((new_row % self.num_rows,
+                                        new_col % self.num_cols))
 
         return affected_pixels
 
