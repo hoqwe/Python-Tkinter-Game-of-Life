@@ -27,9 +27,9 @@ A better (maybe the best) approach to implementing Game of Life in Python at hig
 
 And other approaches:
 - **NumPy** (fast next cell states computation) + **Pillow** (fast image generation): about 5x faster than the current approach, but requires installing those libraries.
-- Image generation by Tkinter: 2x slower than the current approach, but x2 faster for rendering 1 px cells (which is still unplayable). Also, it requires creating a HUGE string for each frame (e.g., `{#rrggbb #rrggbb} {#rrggbb #rrggbb}"` - that's just 4 pixels out of 400x400 = 160,000) which then has to be PARSED back by Tkinter. Not worth it.
+- Image generation by Tkinter: 2x slower than the current approach, but x2 faster for rendering 1 px cells (which is still unplayable). Also, it requires creating a HUGE string for each frame (e.g., `"{#rrggbb #rrggbb} {#rrggbb #rrggbb}"` - that's just 4 pixels out of 400x400 = 160,000) which then has to be PARSED back by Tkinter. Not worth it.
 
-Source: trust me bro (I checked all of those on my own)
+Source: trust me bro (I checked all of those on my own).
 
 ## About the code
 The code is all in one file, yes. I use the MVC (Model-View-Controller) pattern to separate logic:
