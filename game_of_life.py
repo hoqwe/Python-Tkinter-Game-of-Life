@@ -162,6 +162,10 @@ class Cell:
     def update_highlight(self, new_highlight_state: bool) -> None:
         """Highlight or unhighlight the cell."""
         if new_highlight_state:
+            # Prevent highlight overlap
+            if self.highlighted:
+                return
+
             self.prehighlight_color = self.color
             self.color = adjust_color_brightness(self.color,
                                                  self.HIGHLIGHT_COLOR_ADJUST)
